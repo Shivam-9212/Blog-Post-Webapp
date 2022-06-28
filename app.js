@@ -96,11 +96,11 @@ app.get("/about",function(req, res){
 app.get("/contact",function(req, res){
   Post.findOne({head: 'Contact'},function(err, foundPost){
     if(err){
-      console.log("Error while fetching the about page post!")
+      console.log("Error while fetching the contact page post!")
     }
     else{
       res.render("about",{AboutContent : foundPost.content})
-      console.log("Fetched about page post successfully!")
+      console.log("Fetched contact page post successfully!")
     }
   })
 })
