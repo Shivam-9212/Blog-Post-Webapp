@@ -2,13 +2,22 @@
     padding-top: 70px;
     padding-bottom: 70px;
 }
-/* .truncate-ellipsis {
+.truncate-ellipsis {
   width: 800px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   display: block;
-} */
+}
+.btn-outline-secondary{
+  letter-spacing: 2px;
+	font-size: 15px;
+  margin-left: 0px;
+}
+.btn:hover{
+  background-color: #1abc9c !important;
+  color: white;
+}
 .navbar {
     padding-top: 15px;
     padding-bottom: 15px;
@@ -34,9 +43,28 @@
 	height: 60px;
 	background-color: #1abc9c;
 }
+.home-footer-padding{
+  background-color: #1abc9c;
+  margin-top: 5rem;
+	padding-bottom: 30px;
+}
+.home-footer{
+  position: relative;
+	text-align: center;
+	bottom: 0;
+	width: 100%;
+	height: 60px;
+	background-color: #1abc9c;
+}
 
 .footer p {
 	margin-top: 25px;
+	font-size: 12px;
+  color: #fff;
+}
+
+.home-footer p {
+	/* margin-top: 25px; */
 	font-size: 12px;
   color: #fff;
 }

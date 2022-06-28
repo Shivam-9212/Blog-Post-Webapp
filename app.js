@@ -9,6 +9,43 @@ const aboutContent = "Hac habitasse platea dictumst vestibulum rhoncus est pelle
 const contactContent = "Scelerisque eleifend donec pretium vulputate sapien. Rhoncus urna neque viverra justo nec ultrices. Arcu dui vivamus arcu felis bibendum. Consectetur adipiscing elit duis tristique. Risus viverra adipiscing at in tellus integer feugiat. Sapien nec sagittis aliquam malesuada bibendum arcu vitae. Consequat interdum varius sit amet mattis. Iaculis nunc sed augue lacus. Interdum posuere lorem ipsum dolor sit amet consectetur adipiscing elit. Pulvinar elementum integer enim neque. Ultrices gravida dictum fusce ut placerat orci nulla. Mauris in aliquam sem fringilla ut morbi tincidunt. Tortor posuere ac ut consequat semper viverra nam libero.";
 
 const app = express();
+const _ = require("lodash");
+const mongoose = require('mongoose');
+
+mongoose.connect("mongodb://localhost:27017/blogpostDB")
+
+const postsSchema = {
+  head: String,
+  content: String
+}
+
+const Post = mongoose.model("Post", postsSchema);
+
+const Home = new Post({
+  head: "Home",
+  content: homeStartingContent
+})
+
+const About = new Post({
+  head: "About",
+  content: aboutContent
+})
+
+const Contact = new Post({
+  head: "Contact",
+  content: contactContent
+})
+
+var pre_posts = [Home, About, Contact]
+
+Post.insertMany(pre_posts, function(err){
+  if(err){
+    console.log("Error storing pre-defined posts!")
+  }
+  else{
+    console.log("Successfully stored pre-defined posts!")
+  }
+})
 
 let posts = []
 
@@ -17,30 +54,68 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
+app.get('/posts/:PostName',function(req, res){
+  var storedTitle = [];
+  var storedContent = ""
+  var title = ""
+  posts.forEach(function(element){
+    title = element.head;
+    storedContent = element.content;
+    storedTitle = _.lowerCase(element.head);
+    if(storedTitle.includes(req.params.PostName)){
+      res.render("post",{title : title, content: storedContent})
+    }
+  });
+})
+
 app.get("/compose",function(req, res){
   res.render("compose")
 })
 
 app.post("/compose",function(req, res){
-  const post = {
-    title: req.body.postTitle,
-    body: req.body.postBody
-  }
+  const post = new Post({
+    head: req.body.postTitle,
+    content: req.body.postBody,
+  })
   posts.push(post);
   res.redirect("/");
 })
 
 app.get("/about",function(req, res){
-  res.render("about",{AboutContent : aboutContent})
+  Post.findOne({head: 'About'},function(err, foundPost){
+    if(err){
+      console.log("Error while fetching the about page post!")
+    }
+    else{
+      res.render("about",{AboutContent : foundPost.content})
+      console.log("Fetched about page post successfully!")
+    }
+  })
 })
 
 app.get("/contact",function(req, res){
-  res.render("contact",{content : contactContent})
+  Post.findOne({head: 'Contact'},function(err, foundPost){
+    if(err){
+      console.log("Error while fetching the about page post!")
+    }
+    else{
+      res.render("about",{AboutContent : foundPost.content})
+      console.log("Fetched about page post successfully!")
+    }
+  })
 })
 
 app.get("/",function(req ,res){
-  console.log(posts);
-  res.render("home",{home_content : homeStartingContent});
+  res.render("home",{home_content : homeStartingContent, scripts: posts});
+  // Post.findOne({head: 'Home'},function(err, foundPost){
+  //   if(err){
+  //     console.log("Error while fetching the home page post!")
+  //   }
+  //   else{
+  //     res.render("home",{home_content : foundPost.content, scripts: Post})
+  //     console.log("Fetched home page post successfully!")
+  //   }
+  // })
 })
 
 
